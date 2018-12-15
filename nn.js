@@ -38,16 +38,16 @@ class NNModel {
         var tns_ip_x = tf.tensor2d( input_x);
         var tns_ip_y = tf.tensor2d( input_y);
 
-        var fit_resp = await this.tfmodel.fit( 
+        await this.tfmodel.fit( 
             tns_ip_x,
             tns_ip_y,
             { shuffle: true, },
         );
 
+        //console.log( "loss ", fit_resp.history.loss[99] );
         tns_ip_x.dispose();
         tns_ip_y.dispose();
-
-        //console.log( "loss ", fit_resp.history.loss[99] );
+        
     }
 
     async predict( rid, cid ){
@@ -56,9 +56,12 @@ class NNModel {
             [ rid, cid ]
         ]);
 
-        var prd_op = await this.tfmodel.predict( tns_ip ).data();
+        var tns_op = await this.tfmodel.predict( tns_ip )
+        var prd_op = await tns_op.data();
 
         tns_ip.dispose();
+        tns_op.dispose();
+
         //console.log( "rid ", rid * cell_width, ", cid ", cid * cell_width, ", color ", Math.floor( prd_op[0] * 255 ) );
         return prd_op[0];
     }
